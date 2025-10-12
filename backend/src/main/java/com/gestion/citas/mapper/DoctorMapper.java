@@ -2,12 +2,7 @@ package com.gestion.citas.mapper;
 
 import com.gestion.citas.model.dto.DoctorDto;
 import com.gestion.citas.model.entity.Doctor;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.WARN)
 public interface DoctorMapper {

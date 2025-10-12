@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import com.gestion.citas.repository.UserRepository;
+import com.gestion.citas.repository.RoleRepository;
+import com.gestion.citas.model.entity.User;
+import com.gestion.citas.model.entity.Role;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -17,11 +23,32 @@ public class PacienteServiceImpl implements PacienteService {
 
     private final PacienteRepository repo;
     private final PacienteMapper mapper;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public PacienteDto create(PacienteDto dto) {
         Paciente entity = mapper.toEntity(dto);
         Paciente saved = repo.save(entity);
+
+        // create associated User
+        if (saved.getCorreo() != null) {
+            if (userRepository.findByEmail(saved.getCorreo()).isPresent()) {
+                throw new RuntimeException("User with email already exists");
+            }
+
+            Role role = roleRepository.findByName("PACIENTE").orElseThrow(() -> new RuntimeException("Role PACIENTE not found"));
+
+            User user = User.builder()
+                    .fullName(saved.getNombre())
+                    .email(saved.getCorreo())
+                    .password(passwordEncoder.encode(saved.getDocumento()))
+                    .roles(Set.of(role))
+                    .build();
+
+            userRepository.save(user);
+        }
         return mapper.toDto(saved);
     }
 
