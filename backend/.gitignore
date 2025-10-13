@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment files (do not commit secrets)
+.env
+
+# Docker compose overrides
+docker-compose.override.yml
+
+# Maven local wrapper artifacts
+.mvn/wrapper/maven-wrapper.jar
