@@ -1,0 +1,35 @@
+# Root .gitignore for Gestion de citas
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### IDEs ###
+.idea/
+.vscode/
+*.iml
+
+### Java / Maven ###
+target/
+**/target/
+.mvn/
+
+### Node / frontend ###
+frontend/node_modules/
+frontend/dist/
+
+### Docker ###
+docker-compose.override.yml
+
+### Environment / secrets ###
+*.env
+backend/.env
+frontend/.env
+
+### Logs ###
+logs
+*.log
+
+### Editor swap files ###
+*~
+*.swp
