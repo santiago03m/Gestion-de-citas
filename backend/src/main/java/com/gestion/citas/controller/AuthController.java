@@ -3,8 +3,10 @@ package com.gestion.citas.controller;
 import com.gestion.citas.model.dto.AuthenticationRequest;
 import com.gestion.citas.model.dto.AuthenticationResponse;
 import com.gestion.citas.model.dto.RegisterRequest;
+import com.gestion.citas.model.entity.Paciente;
 import com.gestion.citas.model.entity.Role;
 import com.gestion.citas.model.entity.User;
+import com.gestion.citas.repository.PacienteRepository;
 import com.gestion.citas.repository.RoleRepository;
 import com.gestion.citas.repository.UserRepository;
 import com.gestion.citas.service.JwtService;
@@ -33,19 +35,22 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final PacienteRepository pacienteRepository;
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtService jwtService,
                           UserDetailsService userDetailsService,
                           UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          RoleRepository roleRepository) {
+                          RoleRepository roleRepository,
+                          PacienteRepository pacienteRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.pacienteRepository = pacienteRepository;
     }
 
     @PostMapping("/authenticate")
@@ -79,6 +84,23 @@ public class AuthController {
 
         String roleName = request.getRoleName() == null ? "PACIENTE" : request.getRoleName().toUpperCase();
         Role role = roleRepository.findByName(roleName).orElseGet(() -> roleRepository.save(Role.builder().name(roleName).build()));
+
+        // Si es un paciente y se proporcionan datos adicionales, crear el registro de paciente
+        if ("PACIENTE".equals(roleName) && request.getDocumento() != null) {
+            // Verificar si el documento ya existe
+            if (pacienteRepository.findByDocumento(request.getDocumento()).isPresent()) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Paciente paciente = Paciente.builder()
+                    .nombre(request.getFullName())
+                    .documento(request.getDocumento())
+                    .telefono(request.getTelefono())
+                    .correo(request.getEmail())
+                    .build();
+
+            pacienteRepository.save(paciente);
+        }
 
         User user = User.builder()
                 .fullName(request.getFullName())

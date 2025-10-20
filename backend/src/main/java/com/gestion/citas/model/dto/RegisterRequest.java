@@ -13,4 +13,8 @@ public class RegisterRequest {
     private String email;
     private String password;
     private String roleName; // optional, if null defaults to "PACIENTE"
+    
+    // Campos adicionales para pacientes
+    private String documento;
+    private String telefono;
 }
