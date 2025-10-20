@@ -71,8 +71,20 @@ public class CitaServiceImpl implements CitaService {
         Cita existing = citaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cita no encontrada con id: " + id));
 
-        // MapStruct actualiza campos simples (fecha, motivo, estado) pero no doctor/paciente
-        citaMapper.updateFromDto(dto, existing);
+        // Actualizar campos simples
+        if (dto.getFecha() != null && dto.getHora() != null) {
+            String fechaHora = dto.getFecha() + " " + dto.getHora();
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            existing.setFecha(java.time.LocalDateTime.parse(fechaHora, formatter));
+        }
+        
+        if (dto.getMotivo() != null) {
+            existing.setMotivo(dto.getMotivo());
+        }
+        
+        if (dto.getEstado() != null) {
+            existing.setEstado(dto.getEstado());
+        }
 
         Integer doctorId = dto.getDoctorId();
         Integer pacienteId = dto.getPacienteId();
