@@ -1286,7 +1286,7 @@ in the Software without restriction...
 ## 📞 Contacto
 
 - **GitHub:** [@santiago03m](https://github.com/santiago03m)
-- **Email:** santiruedaadhhd@gmail.com
+- **Email:** santiruedadhhd@gmail.com
 
 ---
 
